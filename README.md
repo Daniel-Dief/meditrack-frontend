@@ -1,4 +1,4 @@
-# �� Meditrack Frontend - React + GraphQL
+# 🩺 Meditrack Frontend - React + GraphQL
 
 ## ✨ Tecnologias
 
