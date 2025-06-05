@@ -1,9 +1,9 @@
-function App() {
+import SingIn from "./templates/SingIn"
+
+export default function App() {
   return (
-    <>
-      <h1>Hello, World!</h1>
-    </>
+    <div className="w-full h-full flex justify-center items-center">
+      <SingIn />
+    </div>
   )
 }
-
-export default App
