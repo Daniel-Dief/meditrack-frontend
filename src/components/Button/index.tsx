@@ -11,7 +11,7 @@ export default function Button( { onClick, children, className, color, size } : 
         <button
             onClick={onClick}
             className={`px-4 py-2 rounded transition-colors focus:outline-none ${className}
-                ${color === 'primary' ? 'bg-gradient-to-r from-[#A8DADC] to-[#B8E6E8] text-white' : ''}
+                ${color === 'primary' ? 'bg-[#A8DADC] hover:bg-[#B8E6E8] text-black cursor-pointer transition duration-300' : ''}
                 ${color === 'secondary' ? 'bg-white hover:bg-[#B8E6E8] text-black cursor-pointer transition duration-300' : ''}
                 ${size === 'sm' ? 'text-sm' : size === 'lg' ? 'text-lg' : 'text-base'}
             `}
