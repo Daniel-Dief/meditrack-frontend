@@ -1,10 +1,13 @@
 import Title from "../../components/Texts/Title"
 import Button from "../../components/Button"
 import KPIContainer from "../../components/Container/KPIContainer"
+import { useNavigate } from "react-router-dom"
 
 import { Calendar, Pill, Users } from "lucide-react"
 
 export default function OverView() {
+    const navigate = useNavigate();
+
     return (
         <div className="flex flex-col">
             <div className="p-6 flex justify-between">
@@ -15,6 +18,7 @@ export default function OverView() {
                     </p>
                 </div>
                 <Button
+                    onClick={() => navigate("/addAppointment")}
                     color="primary"
                     className="flex items-center gap-2 px-4 rounded-md text-black font-semibold"
                 >
