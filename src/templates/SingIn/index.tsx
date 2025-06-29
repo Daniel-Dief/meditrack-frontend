@@ -1,25 +1,40 @@
 import BigButton from "../../components/BigButton"
 import { useState, useRef } from "react"
 import Field from "../../components/Field";
+import { useLoginUser } from "../../service/mutations/auth";
+import type { ChangeEvent } from "react";
 
 export default function SignInForm() {
     const [ isDisable, setIsDisable ] = useState<boolean>(true)
     const loginRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
+    const { login, data } = useLoginUser();
 
-    function handleFormChange(_: React.ChangeEvent<HTMLFormElement>) {
-        if(loginRef.current && passwordRef.current) {
-            setIsDisable(
-                loginRef.current.value.trim() === ""
-                ||
-                passwordRef.current.value.trim() === ""
-            )      
+    function handleFormChange(_: ChangeEvent<HTMLFormElement>) {
+        if (loginRef.current && passwordRef.current) {
+            const loginValue = loginRef.current.value.trim();
+            const passwordValue = passwordRef.current.value.trim();
+            setIsDisable(!(loginValue && passwordValue));
         }
-        return
+    }
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        if (loginRef.current && passwordRef.current) {
+            const loginValue = loginRef.current.value.trim();
+            const passwordValue = passwordRef.current.value.trim();
+            await login(loginValue, passwordValue);
+        }
+        if(data) {
+            console.log("Login successful:", data);
+            alert("Login realizado com sucesso!");
+        }
+        window.location.href = "/";
     }
 
     return (
-            <form onChange={handleFormChange} className="bg-[#A8DADC] w-full max-w-md p-8 rounded-3xl shadow-lg flex flex-col justify-center">
+        <div className="flex items-center justify-center h-screen">
+            <form onChange={handleFormChange} onSubmit={handleSubmit} className="bg-[#A8DADC] lg:w-2/3 w-full p-8 rounded-3xl shadow-lg flex flex-col justify-center md">
                 <h1 className="text-center text-5xl font-semibold mb-8 text-black">
                     Entrar
                 </h1>
@@ -45,5 +60,6 @@ export default function SignInForm() {
                     </BigButton>
                 </div>
             </form>
+        </div>
     )
 }

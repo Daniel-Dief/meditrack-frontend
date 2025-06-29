@@ -1,4 +1,5 @@
 import { gql, useMutation } from '@apollo/client';
+import { useAuthStore } from '../../store/auth';
 
 const LOGIN_USER = gql`
   mutation loginUser($hash: String!) {
@@ -27,12 +28,19 @@ type LoginResponse = {
 };
 
 export function useLoginUser() {
+  const { setToken, setUser } = useAuthStore()
   const [mutate, { loading, error, data }] = useMutation<LoginResponse>(LOGIN_USER);
 
   const login = async (login: string, senha: string) => {
     const hash = btoa(`${login}:${senha}`);
 
     const response = await mutate({ variables: { hash } });
+
+    if(response.data) {
+      const { user, token } = response.data.loginUser;
+      setUser(user);
+      setToken(token);
+    }
 
     return response.data?.loginUser;
   };
