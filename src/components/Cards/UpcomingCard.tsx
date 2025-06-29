@@ -16,7 +16,6 @@ interface Props {
 
 export default function UpcomingCard( { upcoming } : Props ) {
     function handleClick(appointmentId: string) {
-        alert(appointmentId);
         window.location.href = `/appointment/${appointmentId}`;
     }
 
