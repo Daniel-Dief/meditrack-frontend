@@ -1,21 +1,50 @@
-import { useRef, type FormEvent } from "react"
+import { useEffect, useRef, type FormEvent } from "react"
 import Field from "../../../components/Field";
 import Button from "../../../components/Button";
+import { useGetAllDoctors } from "../../../service/querys/getDoctors";
+import { useGetAllPatients } from "../../../service/querys/getPatients";
+import { useCreateAppointment } from "../../../service/mutations/createAppointment";
 
 export default function AppointmentForm() {
+    const { create, data } = useCreateAppointment();
     const [dateRef, doctorRef, patientRef] = [
         useRef<HTMLInputElement>(null),
         useRef<HTMLSelectElement>(null),
         useRef<HTMLSelectElement>(null)
     ];
+    const { getAllDoctors, data: allDoctors } = useGetAllDoctors();
+    const { getAllPatients, data: allPatients } = useGetAllPatients();
 
-    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    useEffect(() => {
+        getAllDoctors();
+        getAllPatients();
+    }, [getAllDoctors, getAllPatients]);
+
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        console.log({
-            date: dateRef.current?.value,
-            doctor: doctorRef.current?.value,
-            patient: patientRef.current?.value
+        if(!dateRef.current?.value || !doctorRef.current?.value || !patientRef.current?.value) {
+            alert("Por favor, preencha todos os campos.");
+            return;
+        }
+
+        if(new Date(dateRef.current.value) < new Date()) {
+            alert("A data da consulta não pode ser no passado.");
+            return;
+        }
+
+        const tempDate = new Date(dateRef.current.value);
+        
+        await create({
+            AppointmentDate: tempDate.toISOString(),
+            DoctorId: doctorRef.current?.value ?? "",
+            PatientId: patientRef.current?.value ?? "",
+            StatusId: "1"
         })
+
+        if(data) {
+            alert("Consulta agendada com sucesso!");
+            window.location.href = "/";
+        }
     }
 
     return (
@@ -33,22 +62,20 @@ export default function AppointmentForm() {
                 type="select"
                 name="Médico"
                 placeholder="Selecione um médico"
-                options={[
-                    { value: "1", label: "Dr. João" },
-                    { value: "2", label: "Dr. Maria" },
-                    { value: "3", label: "Dr. Pedro" },
-                ]}
+                options={allDoctors.map(doctor => ({
+                    value: doctor.DoctorId,
+                    label: doctor.Name
+                }))}
             />
             <Field 
                 inputRef={patientRef}
                 type="select"
                 name="Paciente"
                 placeholder="Selecione um paciente"
-                options={[
-                    { value: "1", label: "joao" },
-                    { value: "2", label: "maria" },
-                    { value: "3", label: "pedro" },
-                ]}
+                options={allPatients.map(patient => ({
+                    value: patient.PatientId,
+                    label: patient.Name
+                }))}
             />
             <Button
                 className="w-full"
