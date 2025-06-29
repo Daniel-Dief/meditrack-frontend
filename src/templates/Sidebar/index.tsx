@@ -1,7 +1,15 @@
 import UserCard from "../../components/Cards/UserCard";
 import UpcomingCard from "../../components/Cards/UpcomingCard";
+import { useGetAllAppointments } from "../../service/querys/getAppointment";
+import { useEffect } from "react";
 
 export default function Sidebar() {
+    const { getAllAppointments, data: appointmensData } = useGetAllAppointments();
+
+    useEffect(() => {
+        getAllAppointments();
+    }, [getAllAppointments]);
+
     return (
         <div className="w-fit mt-8 p-6 rounded-lg flex flex-col gap-6 items-start justify-start">
                 <UserCard 
@@ -12,20 +20,15 @@ export default function Sidebar() {
                     Status="Ativo"
                 />
                 <UpcomingCard
-                    upcoming={[
-                        {
-                            doctorName: "Dr. Ana Souza",
-                            type: "Consulta",
-                            date: "2023-10-15",
-                            time: "14:00"
-                        },
-                        {
-                            doctorName: "Dr. Carlos Pereira",
-                            type: "Exame",
-                            date: "2023-10-20",
-                            time: "09:30"
-                        }
-                    ]}
+                    upcoming={
+                        appointmensData.map((appointment) => ({
+                            AppointmentId: appointment.AppointmentId,
+                            Doctor: appointment.Doctor.Name,
+                            AppointmentDate: new Date(appointment.AppointmentDate).toLocaleDateString(),
+                            Status: appointment.Status.Name,
+                            Patient: appointment.Patient.Name
+                        }))
+                    }
                 />
             </div>
     )
